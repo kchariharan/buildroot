@@ -47,3 +47,18 @@ cp /path/to/aa-proxy-rs combine/
 ```
 
 The script mounts the Linux partition inside `sdcard.img` and replaces `/usr/bin/aa-proxy-rs` in-place.
+
+## 🧰 Troubleshooting AA mass-storage mode
+If you see errors like these on target:
+
+- `not enough free space to create mass image`
+- `could not mount mass image via loop device`
+
+then there are **two separate requirements**:
+
+1. `dosfstools` must be present on target (`mkfs.fat`/`mkfs.vfat`) so the mass image can be formatted.
+2. `/data` must have enough free space for `music_mass.img` (the error itself shows required vs available).
+
+This repository now enables target-side `dosfstools` via Buildroot (`BR2_PACKAGE_DOSFSTOOLS=y` in `external/configs/common.part`).
+
+If free space is still low, reduce `MASS_IMAGE_SIZE_MB` (as the runtime hint suggests) or increase available space on the `/data` partition in your image layout.
